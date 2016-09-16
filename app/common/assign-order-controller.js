@@ -57,7 +57,6 @@ define([], function () {
         $state.go("^", $stateParams, {reload: true});
       }
 
-debugger;
       var serverResponse = Identify3D.doBureauSubmitJobToVendor(self.order.designId, self.selectedDistributor.distributorId, self.selectedDistributor.name, self.selectedDistributor.url, self.orderForm)
       // .then(function(user){
       //
