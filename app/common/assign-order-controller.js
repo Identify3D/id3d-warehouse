@@ -22,6 +22,26 @@ define([], function () {
 
     self.orderForm = angular.extend({}, orderFormData);
 
+    function broadcastSliderRecalc() {
+      setTimeout(function(){
+          $scope.$broadcast('reCalcViewDimensions');
+      }, 10);
+    }
+
+    broadcastSliderRecalc();
+
+    function parseISOLocal(s) {
+      var b = s.split(/\D/);
+      return new Date(b[0], b[1]-1, b[2], b[3], b[4], b[5]);
+    }
+
+    if(self.orderForm.BusinessRules && self.orderForm.BusinessRules.expirationDate) {
+      // server returns UTC dates here but assumes PST for the rest of the data being returned.
+      // cropp off the 'z' from the returned string and manually parse the date to local timezone
+      var noUTC = self.orderForm.BusinessRules.expirationDate.substring(0, self.orderForm.BusinessRules.expirationDate.length - 1);
+      self.orderForm.BusinessRules.expirationDate = parseISOLocal(noUTC);
+    }
+
     self.deviceDefinitions = self.orderForm.DesignRules.deviceDefinitions;
 
     delete self.orderForm.DesignRules.deviceDefinitions;
@@ -266,8 +286,8 @@ define([], function () {
     self.createSliderOptions = function(field, floor, ceil) {
 
       var opts = {
-        // floor: floor,
-        // ceil: ceil,
+        floor: floor,
+        ceil: ceil,
         disabled: !field.isEditable,
         hideLimitLabels: true,
         step: 1,
